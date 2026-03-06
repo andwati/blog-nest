@@ -6,6 +6,8 @@ nodeLinker: hoisted
 
 onlyBuiltDependencies:
   - '@nestjs/core'
+  - '@prisma/engines'
   - lefthook
+  - prisma
   - sharp
   - unrs-resolver
