@@ -1,0 +1,54 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node
+node_modules
+npm-debug.log
+pnpm-debug.log
+yarn-error.log
+.npm
+.eslintcache
+
+# Build
+dist
+build
+.next
+.turbo
+.turboignored
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Testing
+coverage
+.jest
+.nyc_output
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Package managers
+.pnpj
+.pnp.js
+
+# Misc
+*.log
+*.pem
+*.key
+*.pub
+.cache
+tmp
+temp
