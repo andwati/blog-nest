@@ -1,0 +1,33 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+  "extends": ["../../biome.json"],
+  "root": false,
+  "files": {
+    "includes": ["**", "!.next", "!dist", "!build"]
+  },
+  "css": {
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noUnknownAtRules": "off"
+      }
+    },
+    "domains": {
+      "next": "recommended",
+      "react": "recommended"
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double"
+    }
+  }
+}

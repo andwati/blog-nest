@@ -1,0 +1,107 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80,
+    "useEditorconfig": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "noExtraBooleanCast": "error",
+        "noUselessCatch": "error",
+        "noUselessTypeConstraint": "error"
+      },
+      "correctness": {
+        "noConstAssign": "error",
+        "noConstantCondition": "error",
+        "noGlobalObjectCalls": "error",
+        "noInvalidConstructorSuper": "error",
+        "noPrecisionLoss": "error",
+        "noSelfAssign": "error",
+        "noSwitchDeclarations": "error",
+        "noUndeclaredVariables": "error",
+        "noUnreachable": "error",
+        "noUnsafeFinally": "error",
+        "noUnsafeOptionalChaining": "error",
+        "noUnusedVariables": "error",
+        "noUnusedPrivateClassMembers": "error"
+      },
+      "style": {
+        "noCommonJs": "error",
+        "noNamespace": "error",
+        "useAsConstAssertion": "error",
+        "useBlockStatements": "off",
+        "useConsistentArrowReturn": "off"
+      },
+      "suspicious": {
+        "noDebugger": "error",
+        "noEmptyBlockStatements": "error",
+        "noExplicitAny": "error",
+        "noFallthroughSwitchClause": "error",
+        "noGlobalAssign": "error",
+        "noRedeclare": "error",
+        "noShadowRestrictedNames": "error",
+        "noUnusedExpressions": "off",
+        "useAwait": "error"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "asNeeded",
+      "arrowParentheses": "always",
+      "quoteStyle": "single",
+      "bracketSpacing": true
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "linter": {
+        "rules": {
+          "complexity": { "noArguments": "error" },
+          "correctness": {
+            "noConstAssign": "off",
+            "noGlobalObjectCalls": "off",
+            "noInvalidConstructorSuper": "off",
+            "noUndeclaredVariables": "off",
+            "noUnreachable": "off"
+          },
+          "style": { "useConst": "error" },
+          "suspicious": {
+            "noDuplicateClassMembers": "off",
+            "noFunctionAssign": "off",
+            "noImportAssign": "off",
+            "noRedeclare": "off",
+            "noVar": "error",
+            "useGetterReturn": "off"
+          }
+        }
+      }
+    }
+  ],
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

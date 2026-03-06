@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+
+nodeLinker: hoisted
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - lefthook
+  - sharp
+  - unrs-resolver

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+  "extends": ["../../biome.json"],
+  "root": false,
+  "files": {
+    "includes": ["**", "!.expo", "!dist", "!android", "!ios"]
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "noCommonJs": "off"
+      },
+      "suspicious": {
+        "noUnknownAtRules": "off"
+      }
+    },
+    "domains": {
+      "react": "recommended"
+    }
+  }
+}

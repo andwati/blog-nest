@@ -1,0 +1,22 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+  "extends": ["../../biome.json"],
+  "root": false,
+  "files": {
+    "includes": ["**", "!dist", "!coverage"]
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noStaticOnlyClass": "off"
+      },
+      "style": {
+        "noParameterProperties": "off",
+        "useImportType": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "warn"
+      }
+    }
+  }
+}
