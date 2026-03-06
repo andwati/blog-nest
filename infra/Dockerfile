@@ -20,7 +20,7 @@ COPY apps/api ./apps/api
 COPY tsconfig.json ./
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm --filter @dpep/api run build
+RUN pnpm --filter api run build
 
 # Stage 3: Backend Runtime
 FROM node:24-alpine AS backend-prod
@@ -37,7 +37,7 @@ COPY --from=backend-build /app/apps/api/package.json ./apps/api/
 
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD ["node", "apps/api/dist/main.js"]
+CMD ["node", "apps/api/dist/src/main.js"]
 
 # Stage 4: Build Frontend
 FROM node:24-alpine AS frontend-build

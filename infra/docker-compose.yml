@@ -1,4 +1,5 @@
-version: '3.8'
+# Development Docker Compose - for local development with hot reload
+# Usage: pnpm docker:dev
 
 services:
   # PostgreSQL Database
@@ -6,16 +7,17 @@ services:
     image: postgres:17-alpine
     container_name: blog_postgres_dev
     restart: unless-stopped
+    env_file: ../.env
     environment:
-      POSTGRES_USER: blog
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: blog_dev
+      POSTGRES_USER: ${DATABASE_USER:-blog}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      POSTGRES_DB: ${DATABASE_NAME:-blog_dev}
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U blog"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-blog} -d ${DATABASE_NAME:-blog_dev}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,6 +29,7 @@ services:
     image: redis:7-alpine
     container_name: blog_redis_dev
     restart: unless-stopped
+    env_file: ../.env
     command: redis-server --appendonly yes
     volumes:
       - redis_data_dev:/data
@@ -42,61 +45,48 @@ services:
 
   # NestJS Backend API
   api:
-    build:
-      context: ..
-      dockerfile: deploy/Dockerfile
-      target: backend-prod
+    image: node:24-alpine
     container_name: blog_api_dev
     restart: unless-stopped
+    working_dir: /workspace
+    command: sh -c "corepack enable && pnpm --filter api run dev"
+    env_file: ../.env
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     environment:
+      CI: "true"
       NODE_ENV: development
-      PORT: 3000
-      DATABASE_URL: postgresql://blog:postgres@postgres:5432/blog_dev
+      DATABASE_URL: postgresql://${DATABASE_USER:-blog}:${DATABASE_PASSWORD:-postgres}@postgres:${DATABASE_PORT:-5432}/${DATABASE_NAME:-blog_dev}
       REDIS_URL: redis://redis:6379
-      API_PORT: 3000
+      API_PORT: ${API_PORT:-3001}
       LOG_LEVEL: debug
     ports:
-      - "3000:3000"
+      - "3001:3001"
     volumes:
-      - ../apps/api/src:/app/apps/api/src
+      - ..:/workspace
     networks:
       - blog_network
 
   # Next.js Frontend
   frontend:
-    build:
-      context: ..
-      dockerfile: deploy/Dockerfile
-      target: frontend-prod
+    image: node:24-alpine
     container_name: blog_frontend_dev
     restart: unless-stopped
+    working_dir: /workspace
+    command: sh -c "corepack enable && pnpm --filter frontend exec next dev -p 3000"
+    env_file: ../.env
     environment:
+      CI: "true"
       NODE_ENV: development
-      NEXT_PUBLIC_API_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      PORT: 3000
     ports:
-      - "3001:3001"
+      - "3000:3000"
     volumes:
-      - ../apps/frontend/src:/app/apps/frontend/src
-    networks:
-      - blog_network
-
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    container_name: blog_nginx_dev
-    restart: unless-stopped
-    depends_on:
-      - api
-      - frontend
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ..:/workspace
     networks:
       - blog_network
 

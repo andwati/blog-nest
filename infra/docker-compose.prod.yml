@@ -1,4 +1,5 @@
-version: '3.8'
+# Production Docker Compose - for production deployment
+# Usage: pnpm docker:prod
 
 services:
   # PostgreSQL Database
@@ -6,16 +7,17 @@ services:
     image: postgres:17-alpine
     container_name: blog_postgres
     restart: unless-stopped
+    env_file: ../.env
     environment:
-      POSTGRES_USER: ${DB_USER:-blog}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
-      POSTGRES_DB: ${DB_NAME:-blog_prod}
+      POSTGRES_USER: ${DATABASE_USER:-blog}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      POSTGRES_DB: ${DATABASE_NAME:-blog_prod}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5432:5432"  # Only expose to localhost
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-blog}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-blog}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,6 +29,7 @@ services:
     image: redis:7-alpine
     container_name: blog_redis
     restart: unless-stopped
+    env_file: ../.env
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-changeme}
     volumes:
       - redis_data:/data
@@ -44,10 +47,11 @@ services:
   api:
     build:
       context: ..
-      dockerfile: deploy/Dockerfile
+      dockerfile: infra/Dockerfile
       target: backend-prod
     container_name: blog_api
     restart: unless-stopped
+    env_file: ../.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,7 +60,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: postgresql://${DB_USER:-blog}:${DB_PASSWORD:-changeme}@postgres:5432/${DB_NAME:-blog_prod}
+      DATABASE_URL: postgresql://${DATABASE_USER:-blog}:${DATABASE_PASSWORD:-changeme}@postgres:${DATABASE_PORT:-5432}/${DATABASE_NAME:-blog_prod}
       REDIS_URL: redis://:${REDIS_PASSWORD:-changeme}@redis:6379
       API_PORT: 3000
       LOG_LEVEL: ${LOG_LEVEL:-info}
@@ -71,18 +75,20 @@ services:
     networks:
       - blog_network
     volumes:
-      - /var/log/blog:/app/logs  # Optional: mount logs to host
+      - /var/log/blog:/app/logs
 
   # Next.js Frontend
   frontend:
     build:
       context: ..
-      dockerfile: deploy/Dockerfile
+      dockerfile: infra/Dockerfile
       target: frontend-prod
     container_name: blog_frontend
     restart: unless-stopped
+    env_file: ../.env
     environment:
       NODE_ENV: production
+      PORT: 3001
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost/api}
     expose:
       - "3001"

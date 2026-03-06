@@ -14,28 +14,47 @@ Multi-stage Docker build configuration for backend (NestJS) and frontend (Next.j
 docker build -f infra/Dockerfile -t blog-nest:latest .
 ```
 
-### `docker-compose.prod.yml`
-Production Docker Compose orchestration with PostgreSQL, Redis, Nginx, and both services.
-
-**Usage:**
-```bash
-cd deploy
-docker compose -f docker-compose.prod.yml up -d
-```
-
-**Or from root:**
-```bash
-docker compose -f deploy/docker-compose.prod.yml up -d
-```
-
 ### `docker-compose.yml`
-Development Docker Compose setup with hot-reload volumes and exposed ports.
+**Base configuration** with shared service definitions. Contains common settings for both development and production environments.
 
-**Usage:**
+### `docker-compose.override.yml`
+**Development overrides** - automatically loaded by Docker Compose CLI when running `docker-compose up`. Includes:
+- Development container names (with `_dev` suffix)
+- Hot-reload code volumes
+- Published ports for local access
+- Debug logging level
+
+### `docker-compose.prod.yml`
+**Production overrides** - applied only when explicitly specified. Includes:
+- Production container names
+- Health checks with longer intervals
+- Restricted port access (localhost only)
+- Logging volumes
+- SSL/TLS configuration
+- Default fallback values for credentials
+
+## Usage
+
+### Development
 ```bash
-cd deploy
-docker compose up -d
+cd infra
+docker compose up
 ```
+Or from root:
+```bash
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.override.yml up
+```
+
+### Production
+```bash
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.prod.yml up -d
+```
+
+### Structure
+The three-file approach eliminates duplication:
+- `docker-compose.yml` = base + shared config
+- `docker-compose.override.yml` = dev-specific overrides (auto-loaded)
+- `docker-compose.prod.yml` = prod-specific overrides (explicit)
 
 ### `nginx.conf`
 Nginx reverse proxy configuration with:

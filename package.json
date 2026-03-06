@@ -10,7 +10,13 @@
     "dev": "turbo run dev --filter='./apps/*'",
     "format": "turbo run format",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "docker:dev": "docker compose -f infra/docker-compose.yml up",
+    "docker:dev:build": "docker compose -f infra/docker-compose.yml build",
+    "docker:prod": "docker compose -f infra/docker-compose.prod.yml up -d",
+    "docker:prod:build": "docker compose -f infra/docker-compose.prod.yml build",
+    "docker:down": "docker compose -f infra/docker-compose.yml down",
+    "docker:prod:down": "docker compose -f infra/docker-compose.prod.yml down"
   },
   "keywords": [],
   "author": "",
